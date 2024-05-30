@@ -6,6 +6,7 @@ function Items() {
   const [itemUnit, setItemUnit] = useState("");
   const [itemPrice, setItemPrice] = useState();
   const [items, setItems] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleNameChange = (event) => {
     setItemName(event.target.value);
@@ -18,6 +19,10 @@ function Items() {
   };
   const handleUnitChange = (event) => {
     setItemUnit(event.target.value);
+  };
+
+  const handleSearch = (event) => {
+    setSearchQuery(event.target.value);
   };
 
   const handleSubmit = (event) => {
@@ -42,7 +47,18 @@ function Items() {
     setItemPrice("");
   };
 
-  const totalQuantity = items.reduce((total, item) => total + item.quantity, 0);
+  const filteredItems = items.filter((item) =>
+    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const filteredItemQuantity = filteredItems.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
+  const filterItemPrice = filteredItems.reduce(
+    (total, item) => total + item.price,
+    0
+  );
   const totalPrice = items.reduce((total, item) => total + item.price, 0);
   return (
     <div className="input-container">
@@ -114,8 +130,27 @@ function Items() {
           </li>
         ))}
       </ul>
-      Total Quantity:{totalQuantity}
-      Total Price:{totalPrice}
+      <p>Total Expense:{totalPrice}</p>
+      <label htmlFor="search">Search</label>
+      <input
+        type="text"
+        placeholder="serach by name.."
+        value={searchQuery}
+        onChange={handleSearch}
+      />
+      <h2>Searched Items</h2>
+      <ul>
+        {filteredItems.map((item, index) => (
+          <li key={index}>
+            Quantity; {item.quantity}
+            {item.unit}
+            Price: {item.price}
+            Date:{item.date}
+          </li>
+        ))}
+      </ul>
+      <p>Quantity:{filteredItemQuantity}</p>
+      <p>Cost:{filterItemPrice}</p>
     </div>
   );
 }
